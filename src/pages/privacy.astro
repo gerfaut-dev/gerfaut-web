@@ -6,7 +6,7 @@ import Card from "../components/ui/Card.astro";
 // What the apps send and to whom, as the code of the release does it.
 // A change to the network requests of an app changes this page in the
 // same release.
-const updated = "18 November 2026";
+const updated = "26 November 2026";
 
 type Item = { term: string; text: string };
 
@@ -29,11 +29,11 @@ const leaves: Item[] = [
   },
   {
     term: "Update check",
-    text: "On by default on Android and desktop. At most once a day, starting a day after you first open Gerfaut, it asks the GitHub API for the latest release. It sends neither your version nor any wallet data, and GitHub sees your IP address. Turn it off in Settings › About. The iPhone app has no update check, since TestFlight and the App Store bring new versions.",
+    text: "On by default on Android and desktop. At most once a day, starting a day after you first open Gerfaut, it reads the latest version from this website. It sends neither your version nor any wallet data, and Cloudflare, which hosts the site, sees your IP address. Version 0.1.0 asks the GitHub API instead, and GitHub sees your IP address. Turn it off in Settings › About. The iPhone app has no update check, since TestFlight and the App Store bring new versions.",
   },
   {
     term: "Links you open",
-    text: "A transaction on mempool.space, a release or an issue on GitHub, the CoinGecko site, and on Android dontkillmyapp.com open in your browser. That site then sees your visit as it would any other.",
+    text: "A transaction on mempool.space, the download page of this website, an issue on GitHub, the CoinGecko site, and on Android dontkillmyapp.com open in your browser. That site then sees your visit as it would any other.",
   },
 ];
 
