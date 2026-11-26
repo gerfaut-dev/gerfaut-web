@@ -1,0 +1,53 @@
+---
+import Icon from "./Icon.astro";
+
+/** One feature of the apps: a title, one line, a few facts, and a real
+    screenshot. On phones the text comes first and the picture closes
+    the section; on wide screens they sit side by side, the picture on
+    the left, or on the right with `reverse`, so that the sections
+    alternate down the page. From 1280px the picture column is 642px:
+    the picture is shown at 640px and the frame adds a hairline on each
+    side, so a 640px file is never resampled.
+    `facts` may be left out: the title and the line say it all, the
+    picture does the rest. */
+interface Props {
+  id: string;
+  title: string;
+  lead: string;
+  facts?: readonly string[];
+  reverse?: boolean;
+}
+
+const { id, title, lead, facts = [], reverse = false } = Astro.props;
+---
+
+<section class="section border-t border-border" aria-labelledby={id}>
+  <div
+    class:list={[
+      "site-container grid items-center gap-10 lg:gap-16",
+      reverse
+        ? "lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] xl:grid-cols-[minmax(0,1fr)_642px]"
+        : "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] xl:grid-cols-[642px_minmax(0,1fr)]",
+    ]}
+  >
+    <div class:list={["max-w-lg", !reverse && "lg:order-2"]}>
+      <h2 id={id} class="section-title">{title}</h2>
+      <p class="mt-4 text-lg text-muted">{lead}</p>
+      {
+        facts.length > 0 && (
+          <ul class="fact-list mt-6">
+            {facts.map((fact) => (
+              <li>
+                <Icon name="check" size={16} />
+                <span>{fact}</span>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+    <div class:list={["min-w-0", !reverse && "lg:order-1"]}>
+      <slot />
+    </div>
+  </div>
+</section>

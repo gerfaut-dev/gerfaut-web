@@ -1,0 +1,381 @@
+---
+import { Image } from "astro:assets";
+import Feature from "../components/Feature.astro";
+import Icon from "../components/Icon.astro";
+import Base from "../layouts/Base.astro";
+import Button from "../components/ui/Button.astro";
+import { codeWords } from "../lib/words";
+import androidWallet from "../assets/android-wallet.webp";
+import androidWallets from "../assets/android-wallets.webp";
+import backup from "../assets/backup.webp";
+import broadcast from "../assets/broadcast.webp";
+import hero from "../assets/hero.webp";
+import lock from "../assets/lock.webp";
+import node from "../assets/node.webp";
+import policy from "../assets/policy.webp";
+import security from "../assets/security.webp";
+import transaction from "../assets/transaction.webp";
+
+const inputs = [
+  { icon: "braces", name: "Descriptor", note: "Output descriptors, BIP‑380" },
+  { icon: "key-round", name: "xpub", note: "xpub, ypub, zpub and their testnet twins" },
+  { icon: "hash", name: "Address", note: "One address, watched on its own" },
+  { icon: "users", name: "Multisig", note: "Any m‑of‑n, sorted or not" },
+  { icon: "route", name: "Miniscript", note: "Timelocks and recovery paths" },
+  { icon: "file-text", name: "BSMS", note: "Coordinator exports, BIP‑129" },
+] as const;
+
+const inputFacts = [
+  "Mainnet, signet, testnet4 and regtest",
+  "Several wallets at once, named, iconed, reordered",
+  "Sparrow and Coldcard exports read as they are",
+] as const;
+
+// Every desktop picture is the whole window, 1150 logical pixels wide
+// at 2x: the hero is shown at that width, the feature shots at 640px
+// from 1280px up, each on the page where the feature lives.
+const desktopSizes =
+  "(min-width: 1280px) 640px, (min-width: 1024px) 55vw, calc(100vw - 32px)";
+const desktopWidths = [640, 960, 1280, 1600, 2300];
+const phoneWidths = [300, 400, 600, 800];
+const phoneSizes = "(min-width: 1024px) 300px, 45vw";
+
+const sourceFacts = [
+  "AGPL-3.0, the apps and the core alike",
+  "Every release built by GitHub Actions from its tag",
+  "Every release ships a SHA256SUMS file signed with minisign",
+] as const;
+---
+
+<Base
+  title="Gerfaut · The ultimate Bitcoin watch-only wallet"
+  description="Gerfaut is a Bitcoin watch-only wallet for Android, iPhone and desktop. It follows every wallet you own from its descriptor or public key, with no private keys."
+>
+  <section class="pt-16 pb-12 md:pt-24 md:pb-16">
+    <div class="site-container">
+      <div class="mx-auto max-w-3xl text-center">
+        <h1
+          class="rise font-display text-[2.375rem] leading-[1.05] font-semibold tracking-[-0.03em] sm:text-[3rem] lg:text-hero"
+        >
+          The ultimate Bitcoin watch-only wallet.
+        </h1>
+        <p class="rise rise-2 mx-auto mt-6 max-w-xl text-lg text-muted">
+          Follow every wallet you own from its descriptor or public key, on
+          your desktop and in your pocket.
+        </p>
+        <div class="rise rise-3 mt-8 flex flex-col items-center gap-3">
+          <Button href="/download" size="wide" icon="download" data-os-download>
+            Download Gerfaut
+          </Button>
+          <Button href="https://github.com/gerfaut-dev" variant="quiet" icon="github" external>
+            Read the source on GitHub
+          </Button>
+        </div>
+        {/* Two facts: side by side with a dot between them, or one
+            under the other on a phone, never cut inside the list. Then
+            the iPhone, not out yet, on a line of its own at every width. */}
+        <p class="rise rise-4 mt-4 text-sm text-muted">
+          <span class="block sm:inline">Free and open source</span>
+          <span class="sep hidden sm:inline" aria-hidden="true">&middot;</span>
+          <span class="block sm:inline">Android, Linux, macOS and Windows</span>
+          <span class="block">iPhone coming soon, through TestFlight</span>
+        </p>
+      </div>
+      <figure class="rise rise-5 shot mt-12 md:mt-16">
+        <Image
+          src={hero}
+          alt="The Gerfaut desktop app on a wallet named Cold storage: a total balance of 0.676 BTC, a balance history chart, the watch status and the latest received transactions"
+          widths={[800, 1150, 1600, 2300]}
+          sizes="(min-width: 1248px) 1150px, calc(100vw - 34px)"
+          quality={90}
+          loading="eager"
+          fetchpriority="high"
+        />
+      </figure>
+    </div>
+  </section>
+
+  <section class="section border-t border-border" aria-labelledby="inputs-heading">
+    <div class="site-container">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 id="inputs-heading" class="section-title">
+          Watch any wallet you already have.
+        </h2>
+        <p class="mt-4 text-lg text-muted">
+          Paste it, open a file or scan a QR code, static or animated.
+        </p>
+      </div>
+      <ul class="tile-row mt-10">
+        {
+          inputs.map((input) => (
+            <li>
+              <span class="text-primary">
+                <Icon name={input.icon} size={20} />
+              </span>
+              <span>
+                <span class="tile-name block">{input.name}</span>
+                <span class="tile-note mt-1 block">{input.note}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+      <ul class="check-line mt-8">
+        {
+          inputFacts.map((fact) => (
+            <li>
+              <Icon name="check" size={16} />
+              <span>{fact}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <Feature
+    id="feature-android"
+    title="Also in your pocket."
+    lead="The same wallets on your phone, carried over from the desktop by scanning an animated QR code."
+    facts={[
+      "Every wallet on one screen, with its icon and its balance",
+      "Home screen widgets, amounts hidden until you ask for them",
+      "Live notifications in the background, even after a reboot, through the backend you chose",
+      "Light and dark mode",
+    ]}
+  >
+    <div class="mx-auto flex max-w-md items-start justify-center gap-4 sm:gap-6 md:max-w-[664px] lg:max-w-none">
+      <Image
+        src={androidWallets}
+        alt="The home screen of the Gerfaut mobile app in the light theme: four wallets, each with its icon and balance, from cold storage to a family vault"
+        widths={phoneWidths}
+        sizes={phoneSizes}
+        loading="lazy"
+        class="block h-auto max-w-[320px] min-w-0 flex-1"
+      />
+      <Image
+        src={androidWallet}
+        alt="A wallet opened in the mobile app in the dark theme: the balance, then the list of transactions with their dates and signed amounts"
+        widths={phoneWidths}
+        sizes={phoneSizes}
+        loading="lazy"
+        class="mt-10 block h-auto max-w-[320px] min-w-0 flex-1 sm:mt-16"
+      />
+    </div>
+  </Feature>
+
+  <Feature
+    id="feature-transactions"
+    title="Every transaction, in full."
+    lead="Open any transaction and see where the coins come from, where they go, and what the fee cost."
+    reverse
+  >
+    <figure class="shot">
+      <Image
+        src={transaction}
+        alt="The Transactions page of the desktop app with a transaction opened over it: the amount received, its confirmation and block, then a diagram with the input on the left, the two outputs on the right and the fee below"
+        widths={desktopWidths}
+        sizes={desktopSizes}
+        quality={90}
+        loading="lazy"
+      />
+    </figure>
+  </Feature>
+
+  <Feature
+    id="feature-backup"
+    title="One backup, both devices."
+    lead="Every wallet you watch, encrypted with a password you choose, restored on any device."
+    facts={[
+      "A file, or an animated QR code the phone scans from the desktop screen",
+      "Holds descriptors and addresses, never a private key",
+      "The history of a wallet as a CSV file, filtered by date and direction",
+      "Everything stays on your machines",
+    ]}
+  >
+    <figure class="shot">
+      <Image
+        src={backup}
+        alt="The Backup and sync settings of the desktop app with the Export a backup dialog open: the wallets to include, a switch for the node settings, and the password typed twice"
+        widths={desktopWidths}
+        sizes={desktopSizes}
+        quality={90}
+        loading="lazy"
+      />
+    </figure>
+  </Feature>
+
+  <Feature
+    id="feature-node"
+    title="Your node. Tor built in."
+    lead="Electrum or Esplora, yours or a public one. An .onion backend needs nothing else installed."
+    facts={[
+      "electrs or Fulcrum over TLS or plain TCP, Esplora over HTTPS or HTTP",
+      "Self-signed certificates pinned by their fingerprint",
+      "Live notifications on desktop and Android, within seconds over Electrum, the public default included. Over Esplora, addresses the server does not push are checked a few per minute, so a payment can take longer to show",
+      "Mainnet, signet, testnet4 and regtest, each with its own backend",
+    ]}
+    reverse
+  >
+    <figure class="shot">
+      <Image
+        src={node}
+        alt="The Network settings of the desktop app: the Backend card with the choice between a public API, an Esplora or an Electrum server you run, then the Tor card"
+        widths={desktopWidths}
+        sizes={desktopSizes}
+        quality={90}
+        loading="lazy"
+      />
+    </figure>
+  </Feature>
+
+  <Feature
+    id="feature-security"
+    title="Locked, encrypted, disguised."
+    lead="The vault is encrypted on disk. The lock is what stops someone holding your unlocked device."
+    facts={[
+      "A PIN or a password to open the app, biometrics on Android",
+      "Stealth mode on Android: a real calculator hides the app, type your PIN and press equals",
+      "Locked, Gerfaut shows no wallet. On Android, a lock also blocks screenshots and blanks Gerfaut in the recent apps",
+      "Wrong guesses slow down: three tries, then a growing delay",
+    ]}
+  >
+    <div class="mx-auto flex max-w-md items-start justify-center gap-4 sm:gap-6 md:max-w-[664px] lg:max-w-none">
+      <Image
+        src={security}
+        alt="An Android phone showing a plain calculator: the stealth mode of the Gerfaut app, which opens when the PIN is typed and equals is pressed"
+        widths={phoneWidths}
+        sizes={phoneSizes}
+        loading="lazy"
+        class="block h-auto max-w-[320px] min-w-0 flex-1"
+      />
+      <Image
+        src={lock}
+        alt="The lock screen of the mobile app: the Gerfaut mark, the word Locked, an empty PIN field and an Unlock button"
+        widths={phoneWidths}
+        sizes={phoneSizes}
+        loading="lazy"
+        class="mt-10 block h-auto max-w-[320px] min-w-0 flex-1 sm:mt-16"
+      />
+    </div>
+  </Feature>
+
+  <Feature
+    id="feature-policy"
+    title="Miniscript, read in plain words."
+    lead="Every spending path of a descriptor, each timelock counted down to the block or the date it opens."
+    facts={[
+      "Multisig m‑of‑n, sorted or not, and BSMS imports",
+      "Recovery paths and inheritance setups, with the coins unlocked and the wait for the next one",
+      "Every signing key with its fingerprint and derivation path",
+      "The raw descriptor, one click away",
+    ]}
+    reverse
+  >
+    <figure class="shot">
+      <Image
+        src={policy}
+        alt="The Policy page of the desktop app: the primary key can spend now, a recovery key can spend after a wait of three blocks, about 30 minutes"
+        widths={desktopWidths}
+        sizes={desktopSizes}
+        quality={90}
+        loading="lazy"
+      />
+    </figure>
+  </Feature>
+
+  <Feature
+    id="feature-broadcast"
+    title="Broadcast raw transactions."
+    lead="Send a transaction signed elsewhere and follow it until it confirms. Gerfaut never signs."
+    facts={[
+      "Paste a PSBT or a raw transaction, open a file, or scan an animated QR code",
+      "Inputs, outputs and fee drawn before anything leaves",
+      "A warning for anything odd: a missing signature, a high fee, dust",
+      "Sent through the backend you chose, over Tor when that backend is an .onion",
+      "On desktop and Android only: the iPhone app has no Broadcast screen",
+    ]}
+  >
+    <figure class="shot">
+      <Image
+        src={broadcast}
+        alt="The Broadcast page of the desktop app with a transaction ready to send: its input on the left, its two outputs on the right, the fee below, and the pill Ready to broadcast"
+        widths={desktopWidths}
+        sizes={desktopSizes}
+        quality={90}
+        loading="lazy"
+      />
+    </figure>
+  </Feature>
+
+  <section class="section border-t border-border" aria-labelledby="source-heading">
+    <div
+      class="site-container grid items-center gap-10 xl:grid-cols-2 xl:gap-16"
+    >
+      <div class="max-w-lg">
+        <h2 id="source-heading" class="section-title">
+          Read the code. Check every file.
+        </h2>
+        <ul class="fact-list mt-6">
+          {
+            sourceFacts.map((fact) => (
+              <li>
+                <Icon name="check" size={16} />
+                <span>{fact}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2">
+          <Button href="https://github.com/gerfaut-dev" icon="github" external>
+            Read the code on GitHub
+          </Button>
+          <Button href="/download#verify" variant="quiet">Verify a download</Button>
+        </div>
+      </div>
+      <pre class="dark-island terminal"><code><span class="prompt">$</span> <Fragment set:html={codeWords("minisign -Vm SHA256SUMS \\")} />
+<Fragment set:html={codeWords("    -P RWTz3c4gUmglCX5Uvjthigz1ts3TS3ZSdhRNpFgOJRW/Wr4XjGlqTR3O")} />
+<span class="out">Signature and comment signature verified</span>
+<span class="out">Trusted comment: Gerfaut v0.1.0</span>
+<span class="prompt">$</span> <Fragment set:html={codeWords("sha256sum --check SHA256SUMS --ignore-missing")} />
+<span class="out">Gerfaut_0.1.0_amd64.AppImage: OK</span></code></pre>
+    </div>
+  </section>
+
+  <section class="section border-t border-border" aria-labelledby="cta-heading">
+    <div class="site-container text-center">
+      <h2 id="cta-heading" class="section-title mx-auto max-w-2xl">
+        Your cold storage deserves a watcher.
+      </h2>
+      <div class="mt-8 flex flex-col items-center gap-3">
+        <Button href="/download" size="wide" icon="download" data-os-download>
+          Download Gerfaut
+        </Button>
+        <p class="text-sm text-muted">
+          Android <span class="sep" aria-hidden="true">&middot;</span> Linux
+          <span class="sep" aria-hidden="true">&middot;</span> macOS
+          <span class="sep" aria-hidden="true">&middot;</span> Windows
+          <span class="block">iPhone coming soon, through TestFlight</span>
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { detectPlatform } from "../lib/platform";
+
+  // The download buttons point at the card of the visitor's system on
+  // the download page, and name the system when its app is out. On an
+  // iPhone they keep the generic label: there is nothing to download
+  // yet, and the card says so. Anything else keeps the generic button.
+  detectPlatform().then((detected) => {
+    if (!detected) return;
+    for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-os-download]")) {
+      link.href = `/download#${detected.slot}`;
+      if (detected.release !== "out") continue;
+      const label = link.querySelector("span");
+      if (label) label.textContent = `Download for ${detected.name}`;
+    }
+  });
+</script>

@@ -1,0 +1,65 @@
+---
+import Mark from "./Mark.astro";
+
+// In the order of the header, then the privacy policy and the mail
+// address, which the header leaves out.
+const links = [
+  { href: "/download", label: "Download" },
+  { href: "https://gerfaut-wallet.com/docs", label: "Docs" },
+  { href: "https://github.com/gerfaut-dev", label: "GitHub" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "mailto:info@pandul.fr", label: "info@pandul.fr" },
+];
+// The padding widens each target past 44 px and the list takes it back:
+// the labels stay where they were.
+const linkClass =
+  "inline-flex min-h-11 items-center px-2.5 text-muted transition-colors duration-150 hover:text-text";
+---
+
+<footer class="border-t border-border">
+  <div
+    class="site-container flex flex-col gap-4 py-8 md:py-10 lg:flex-row lg:items-center lg:justify-between"
+  >
+    <div>
+      <p class="flex items-center gap-3 text-sm text-muted">
+        {/* The padding widens the target to 44 px and the negative margin
+            takes it back: the mark stays where it was. */}
+        <a
+          href="/"
+          class="mark-link -mx-2.5 inline-flex min-h-11 items-center px-2.5 text-primary"
+          aria-label="Gerfaut home"
+        >
+          <Mark class="h-5 w-auto" />
+        </a>
+        <span>
+          &copy; {new Date().getFullYear()} Lo&iuml;c Morel
+          <span class="sep" aria-hidden="true">&middot;</span>
+          <a
+            href="https://www.gnu.org/licenses/agpl-3.0.html"
+            class="inline-flex min-h-11 items-center transition-colors duration-150 hover:text-text"
+            >AGPL-3.0</a
+          >
+        </span>
+      </p>
+      {/* French law asks every site to name its host, with its address and
+          phone number. */}
+      <p class="text-xs text-muted">
+        Hosted by Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107,
+        USA, <span class="whitespace-nowrap">+1 650 319 8930</span>
+      </p>
+    </div>
+    <nav aria-label="Footer">
+      <ul class="-mx-2.5 flex flex-wrap text-sm">
+        {
+          links.map((link) => (
+            <li>
+              <a href={link.href} class={linkClass}>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</footer>

@@ -1,0 +1,866 @@
+/* Toundra design tokens. The site is light only; .dark-island paints a
+   block at the night end of the ramp (the terminal card). */
+
+@import "tailwindcss";
+
+/* --- fonts (SIL OFL 1.1, served with their license files) --- */
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("/fonts/bricolage-grotesque/BricolageGrotesque-Variable.woff2")
+    format("woff2-variations");
+  font-weight: 200 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("/fonts/instrument-sans/InstrumentSans-Variable.woff2")
+    format("woff2-variations");
+  font-weight: 400 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jetbrains-mono/JetBrainsMono-Variable.woff2")
+    format("woff2-variations");
+  font-weight: 100 800;
+  font-display: swap;
+}
+
+/* --- theme --- */
+
+@theme {
+  /* Colors, light theme (default) */
+  --color-background: #f4f7f9;
+  --color-surface: #ffffff;
+  --color-sunken: #ebf0f4;
+  --color-border: #c7d2db;
+  --color-text: #0d1317;
+  --color-muted: #55636f;
+  --color-primary: #0e7490;
+  --color-primary-hover: #0a5d75;
+  --color-on-primary: #ffffff;
+  /* Amber: what is worth reading, with nothing at risk (the beta). */
+  --color-pending: #745400;
+  --color-pending-surface: #fdf0cf;
+  /* The border of anything amber: its text colour at 25%. */
+  --color-pending-border: color-mix(in srgb, var(--color-pending) 25%, transparent);
+
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-ui: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+  /* Type scale */
+  --text-hero: 3.5rem;
+  --text-hero--line-height: 1.05;
+  --text-hero--letter-spacing: -0.03em;
+  --text-hero--font-weight: 600;
+  --text-display: 2rem;
+  --text-display--line-height: 1.15;
+  --text-display--letter-spacing: -0.02em;
+  --text-display--font-weight: 600;
+  --text-h1: 1.5rem;
+  --text-h1--line-height: 1.25;
+  --text-h1--letter-spacing: -0.01em;
+  --text-h1--font-weight: 600;
+  --text-h2: 1.125rem;
+  --text-h2--line-height: 1.35;
+  --text-h2--font-weight: 600;
+  --text-body: 1rem;
+  --text-body--line-height: 1.55;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.5;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.04em;
+  --text-label--font-weight: 500;
+  --text-amount: 2rem;
+  --text-amount--line-height: 1.1;
+  --text-amount--letter-spacing: -0.01em;
+  --text-amount--font-weight: 500;
+  --text-data: 0.8125rem;
+  --text-data--line-height: 1.6;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-overlay: 0 8px 24px rgba(13, 19, 23, 0.14);
+
+  --ease-out-toundra: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* A self-contained dark island on the light page: the terminal card
+   sits at the night end of the ramp. */
+.dark-island {
+  --color-background: #0b0f14;
+  --color-surface: #161e27;
+  --color-sunken: #1f2933;
+  --color-border: #2a3440;
+  --color-text: #e6ecf2;
+  --color-muted: #8a98a6;
+  --color-primary: #7dd3e8;
+  --color-primary-hover: #a5e1f0;
+  --color-on-primary: #06232b;
+  color-scheme: dark;
+}
+
+/* --- base --- */
+
+:root {
+  color-scheme: light;
+  /* What pushes a 16px icon down to the middle of the first line of
+     body-sm text. */
+  --icon-on-body-sm: calc((var(--text-body-sm) * var(--text-body-sm--line-height) - 16px) / 2);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--color-text);
+  background: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Bitcoin data always in mono with tabular figures. */
+.font-data,
+[class*="font-data"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* In the base layer, so that one paragraph can ask for balance. */
+@layer base {
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* Focus: 2px ring in the theme's action color, offset 2px. */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* A slight rounding for rings around plain text, at no specificity so
+   that a button or card keeps its own radius under the ring. */
+:where(:focus-visible) {
+  border-radius: 2px;
+}
+
+/* The footer mark is padded out to a 44 px target: its ring keeps to
+   the mark, clear of the copyright line beside it. */
+.mark-link:focus-visible {
+  outline-offset: -6px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+/* The hero settles in on load: opacity and a short rise, one element
+   after the other. Under reduced motion the end state applies at once. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* --- layout --- */
+
+@layer components {
+/* The one page width, 1200px with 16px gutters on phones and 24px above. */
+.site-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+@media (min-width: 768px) {
+  .site-container {
+    padding-inline: 24px;
+  }
+}
+
+/* Marketing rhythm: two paddings of 40px meet across a hairline on
+   phones, two of 56px on desktop, so sections sit 80 to 112px apart. */
+.section {
+  padding-block: 40px;
+}
+@media (min-width: 768px) {
+  .section {
+    padding-block: 56px;
+  }
+}
+
+/* Section titles sit between display and hero: 28px on phones, 40px on
+   desktop, always Bricolage 600 with the tight tracking of the scale. */
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  line-height: 1.12;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+@media (min-width: 768px) {
+  .section-title {
+    font-size: 2.25rem;
+  }
+}
+@media (min-width: 1024px) {
+  .section-title {
+    font-size: 2.5rem;
+    letter-spacing: -0.025em;
+  }
+}
+
+/* The dot between two short facts on one line, with the same room on
+   both sides: the font's own space is too thin to set it apart. */
+.sep {
+  margin-inline: 0.3em;
+}
+
+.rise {
+  animation: rise 250ms var(--ease-out-toundra) both;
+}
+.rise-2 {
+  animation-delay: 60ms;
+}
+.rise-3 {
+  animation-delay: 120ms;
+}
+.rise-4 {
+  animation-delay: 180ms;
+}
+.rise-5 {
+  animation-delay: 240ms;
+}
+}
+
+/* --- shared component classes --- */
+
+@layer components {
+/* Buttons: 44px, radius 8px, Instrument Sans 14px/500, press scale 0.96.
+   A label too long for its place wraps and the button grows, rather
+   than run out of the card around it. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 8px 20px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 150ms var(--ease-out-toundra),
+    color 150ms var(--ease-out-toundra),
+    transform 100ms var(--ease-out-toundra);
+}
+.btn:active {
+  transform: scale(0.96);
+}
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+@media (hover: hover) {
+  .btn-primary:hover {
+    background: var(--color-primary-hover);
+  }
+}
+.btn-wide {
+  padding-inline: 28px;
+}
+/* Disabled: half opacity, no hover, no press. Only a primary <button>
+   gets there; a link is never disabled. */
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+/* An icon in a button or a quiet link never shrinks and never takes
+   the click from the element around it. */
+.btn svg,
+.link-quiet svg {
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+/* The wordmark next to the mark: Bricolage ExtraBold, the lockup's
+   tracking, 16px on phones and 18px above. */
+.wordmark {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+@media (min-width: 640px) {
+  .wordmark {
+    font-size: 1.125rem;
+  }
+}
+
+/* A header entry: 44px tall, quiet until hovered, the current page in
+   the action colour and underlined. */
+.nav-item {
+  display: inline-flex;
+  height: 44px;
+  cursor: pointer;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--radius-md);
+  padding: 0 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-muted);
+  text-decoration: none;
+  transition:
+    background-color 150ms var(--ease-out-toundra),
+    color 150ms var(--ease-out-toundra);
+}
+@media (hover: hover) {
+  .nav-item:hover {
+    background: var(--color-sunken);
+    color: var(--color-text);
+  }
+}
+.nav-item[aria-current="page"] {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 6px;
+}
+
+/* The phone menu: a 44px button, and a panel that drops under the
+   header with one 44px row per entry. Closed, the panel is not there. */
+.menu-button {
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+  transition: background-color 150ms var(--ease-out-toundra);
+}
+@media (hover: hover) {
+  .menu-button:hover {
+    background: var(--color-sunken);
+  }
+}
+.menu-button[aria-expanded="true"] {
+  background: var(--color-sunken);
+}
+.menu-button .menu-close {
+  display: none;
+}
+.menu-button[aria-expanded="true"] .menu-open {
+  display: none;
+}
+.menu-button[aria-expanded="true"] .menu-close {
+  display: block;
+}
+.menu-panel {
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-background);
+  /* A menu is a detached surface: the overlay shadow, cut at the top
+     edge so that none of it falls back on the header. */
+  box-shadow: var(--shadow-overlay);
+  clip-path: inset(0 0 -32px 0);
+}
+.menu-panel[hidden] {
+  display: none;
+}
+.menu-panel a {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text);
+  text-decoration: none;
+}
+@media (hover: hover) {
+  .menu-panel a:hover {
+    background: var(--color-sunken);
+  }
+}
+.menu-panel a[aria-current="page"] {
+  color: var(--color-primary);
+}
+
+/* A quiet text link: muted, turns to the text colour, arrow icon inline. */
+.link-quiet {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-muted);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 150ms var(--ease-out-toundra);
+}
+@media (hover: hover) {
+  .link-quiet:hover {
+    color: var(--color-text);
+  }
+}
+
+/* Inline link in running text. */
+.link {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--color-border);
+  text-underline-offset: 2px;
+  transition: color 150ms var(--ease-out-toundra);
+}
+@media (hover: hover) {
+  .link:hover {
+    color: var(--color-primary-hover);
+  }
+}
+
+/* Card: surface, hairline border, radius 12px, never a shadow. */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+/* The platform card that matches the visitor's system: a Glacier
+   border drawn twice as thick. */
+.card-current {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+}
+
+/* A screenshot of the app, framed like a card: radius 12px, hairline
+   border, no shadow. The image fills the frame edge to edge. */
+.shot {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The padding of a tile, shared with the facts set under the row. */
+.tile-row,
+.check-line {
+  --tile-padding: 20px;
+}
+
+/* A row of tiles separated by hairlines: one hairline of background
+   shows through the 1px gap between surfaces. */
+.tile-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-border);
+}
+@media (min-width: 640px) {
+  .tile-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1280px) {
+  .tile-row {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+.tile-row > li {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: var(--tile-padding);
+  background: var(--color-surface);
+}
+.tile-name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.tile-note {
+  font-size: var(--text-body-sm);
+  line-height: var(--text-body-sm--line-height);
+  color: var(--color-muted);
+  text-wrap: balance;
+}
+
+/* Three short facts under a row of tiles, each led by a check, on the
+   grid of the tiles: the same hairline gap, border and padding, so the
+   checks line up with the text of the tiles above. One fact per line
+   on phones, three columns from 640px, where the tiles go by three
+   and then by six. */
+.check-line {
+  display: grid;
+  gap: 10px 1px;
+  padding: 0;
+  margin-inline: 1px;
+  margin-bottom: 0;
+  list-style: none;
+  font-size: var(--text-body-sm);
+  color: var(--color-text);
+}
+@media (min-width: 640px) {
+  .check-line {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.check-line > li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding-inline: var(--tile-padding);
+  text-wrap: balance;
+}
+.check-line svg {
+  flex-shrink: 0;
+  margin-top: var(--icon-on-body-sm);
+  color: var(--color-primary);
+}
+
+/* Bulleted facts under a section title, one check per line. */
+.fact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.fact-list > li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.fact-list svg {
+  flex-shrink: 0;
+  margin-top: 4px;
+  color: var(--color-primary);
+}
+
+/* The terminal card: a dark island on the light page, mono text, the
+   prompt in the island's action colour. A line too long for a phone
+   wraps: nothing to scroll, and the public key shows whole. */
+.terminal {
+  margin: 0;
+  padding: 20px 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-data);
+  font-size: 0.8125rem;
+  line-height: 1.8;
+  font-variant-numeric: tabular-nums;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 639px) {
+  .terminal {
+    padding: 16px;
+  }
+}
+.terminal .prompt {
+  color: var(--color-primary);
+  user-select: none;
+}
+.terminal .out {
+  color: var(--color-muted);
+}
+
+/* A pill: the "Your system" mark on the download page. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.pill-neutral {
+  background: var(--color-sunken);
+  color: var(--color-muted);
+  border: 1px solid var(--color-border);
+}
+
+/* The public beta, while the version starts with 0: the banner over
+   every page, the pill next to the wordmark and the note (an alert)
+   above the download cards. Amber, the tone of what is worth reading, never the
+   red of a risk: a tinted surface, the amber text, and a border of that
+   text at 25%. */
+.pill-beta {
+  background: var(--color-pending-surface);
+  color: var(--color-pending);
+  border: 1px solid var(--color-pending-border);
+}
+.beta-banner {
+  border-bottom: 1px solid var(--color-pending-border);
+  background: var(--color-pending-surface);
+  color: var(--color-pending);
+}
+
+/* A note worth reading: a panel of its own, the icon on the first line
+   of text, the text in body-sm. Amber is the one tone of the site. */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--text-body-sm);
+  line-height: var(--text-body-sm--line-height);
+}
+.alert-icon {
+  flex-shrink: 0;
+  margin-top: var(--icon-on-body-sm);
+}
+.alert-pending {
+  border-color: var(--color-pending-border);
+  background: var(--color-pending-surface);
+  color: var(--color-pending);
+}
+/* A link in amber text: underlined in the amber of the border, solid
+   on hover. In the banner it is the one target of the line, 44px tall,
+   which sets the height of the banner. */
+.beta-link {
+  color: inherit;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-pending) 45%, transparent);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 150ms var(--ease-out-toundra);
+}
+.beta-link:hover {
+  text-decoration-color: currentColor;
+}
+.beta-banner .beta-link {
+  display: inline-flex;
+  min-height: 44px;
+  flex-shrink: 0;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* A code block with its copy button down its right edge, 44px wide
+   and as tall as the block. The button swaps its icon for a check for
+   a moment once the text is on the clipboard. */
+.code-copy {
+  position: relative;
+  margin-top: 8px;
+}
+.code-copy .code-block {
+  padding-right: 56px;
+}
+.code-copy-button {
+  position: absolute;
+  inset-block: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  min-height: 44px;
+  border: 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition:
+    background-color 150ms var(--ease-out-toundra),
+    color 150ms var(--ease-out-toundra);
+}
+@media (hover: hover) {
+  .code-copy-button:hover {
+    background: color-mix(in srgb, var(--color-sunken) 60%, var(--color-border));
+    color: var(--color-text);
+  }
+}
+.code-copy-button .code-copy-done {
+  display: none;
+}
+.code-copy-button[data-done] .code-copy-idle {
+  display: none;
+}
+.code-copy-button[data-done] .code-copy-done {
+  display: block;
+  color: var(--color-primary);
+}
+
+/* A disclosure: it shows part of the page, it does nothing, so it has
+   no fill. A chevron then the label in the muted colour, the sunken
+   surface on hover, and the chevron turned down once open. */
+.disclosure {
+  display: flex;
+  width: fit-content;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  color: var(--color-muted);
+  list-style: none;
+  cursor: pointer;
+  transition:
+    background-color 150ms var(--ease-out-toundra),
+    color 150ms var(--ease-out-toundra);
+}
+.disclosure::-webkit-details-marker {
+  display: none;
+}
+@media (hover: hover) {
+  .disclosure:hover {
+    background: var(--color-sunken);
+    color: var(--color-text);
+  }
+}
+.disclosure svg {
+  flex-shrink: 0;
+  transition: transform 150ms var(--ease-out-toundra);
+}
+details[open] > .disclosure svg {
+  transform: rotate(90deg);
+}
+
+/* Inline code and command blocks: data font on the sunken surface. A
+   command or a key too long for the block wraps, so that it shows
+   whole: the copy button gives it back on one line. */
+.code-word {
+  display: inline-block;
+}
+.code-block {
+  margin: 0;
+  background: var(--color-sunken);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-family: var(--font-data);
+  font-size: var(--text-data);
+  line-height: var(--text-data--line-height);
+  font-variant-numeric: tabular-nums;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* One file of a release: its name, what it is for, its weight, and
+   the download arrow that says the row is the action. */
+.file-row {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 44px;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--color-sunken);
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-out-toundra);
+}
+@media (hover: hover) {
+  .file-row:hover {
+    background: color-mix(in srgb, var(--color-sunken) 60%, var(--color-border));
+  }
+}
+.file-row svg {
+  flex-shrink: 0;
+  color: var(--color-primary);
+}
+
+/* The right end of a card head (badges, a version): a line of its own
+   under the title on phones, in line with it (40px icon, 12px gap).
+   The space above the line belongs to what the line holds, so that it
+   takes no room while it holds nothing to show. */
+.card-action {
+  display: flex;
+  flex-basis: 100%;
+  align-items: center;
+  gap: 8px;
+  padding-left: 52px;
+}
+.card-action > * {
+  margin-top: 8px;
+}
+@media (min-width: 640px) {
+  .card-action {
+    flex-basis: auto;
+    margin-left: auto;
+    padding-left: 0;
+  }
+  .card-action > * {
+    margin-top: 0;
+  }
+}
+}

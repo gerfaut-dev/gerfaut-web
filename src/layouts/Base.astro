@@ -1,0 +1,91 @@
+---
+import BetaBanner from "../components/BetaBanner.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Keeps the page out of search results. */
+  noindex?: boolean;
+}
+
+const { title, description, noindex = false } = Astro.props;
+// The address as the links write it: no index, no .html, no final slash.
+const canonical = new URL(
+  Astro.url.pathname.replace(/(\/index)?(\.html)?\/?$/, "") || "/",
+  Astro.site,
+);
+const ogImage = new URL("/og.png", Astro.site);
+const ogImageAlt =
+  "The Gerfaut desktop and mobile apps beside the line: The ultimate Bitcoin watch-only wallet.";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta name="theme-color" content="#F4F7F9" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Gerfaut" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+
+    <link
+      rel="preload"
+      href="/fonts/bricolage-grotesque/BricolageGrotesque-Variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/instrument-sans/InstrumentSans-Variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/jetbrains-mono/JetBrainsMono-Variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+  </head>
+  {/* A column as tall as the window: on a short page the footer still
+      sits at the bottom. */}
+  <body class="flex min-h-dvh flex-col">
+    <a
+      href="#main"
+      class="sr-only rounded-md bg-primary px-4 py-2 text-sm font-medium text-on-primary focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2"
+      >Skip to content</a
+    >
+    <BetaBanner />
+    <Header />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,174 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import Card from "../components/ui/Card.astro";
+
+// What the apps send and to whom, as the code of the release does it.
+// A change to the network requests of an app changes this page in the
+// same release.
+const updated = "18 November 2026";
+
+type Item = { term: string; text: string };
+
+const leaves: Item[] = [
+  {
+    term: "Blockchain server",
+    text: "Gerfaut asks a server for the history of your addresses. The server sees those addresses, or their script hashes, which point to the same addresses, and your IP address. With the Automatic server, the public servers of mempool.space, blockstream.info and mempool.emzy.de are tried in turn, so a server that is down hands your request to the next one. Pick one operator, or your own node, to keep the list to one.",
+  },
+  {
+    term: "Notifications",
+    text: "Off by default. Once on, Gerfaut also checks your wallets in the background. On Android, Live keeps a connection open to a server of the same operators, so it also learns how long Gerfaut stays connected and from which IP addresses. The notifications themselves are made on your device, with no push service in between.",
+  },
+  {
+    term: "Broadcast",
+    text: "Only on Android and desktop. Before you broadcast a signed transaction, its preview asks your server about the coins it spends. The transaction then goes to your server first. If that server cannot be reached, the next one in your list receives it. A server that refuses it stops the broadcast there.",
+  },
+  {
+    term: "Fiat price",
+    text: "Off by default. Once on, Gerfaut asks for the price in your currency once a minute while a screen shows it, and the desktop Overview asks for the price history of its chart. The source is mempool.space, or CoinGecko if you pick it or if mempool.space does not quote your currency. Each request carries your IP address and the currency, and no wallet data. The Android price widget, if you place it, asks about every 15 minutes, even with the fiat value off.",
+  },
+  {
+    term: "Update check",
+    text: "On by default on Android and desktop. At most once a day, starting a day after you first open Gerfaut, it asks the GitHub API for the latest release. It sends neither your version nor any wallet data, and GitHub sees your IP address. Turn it off in Settings › About. The iPhone app has no update check, since TestFlight and the App Store bring new versions.",
+  },
+  {
+    term: "Links you open",
+    text: "A transaction on mempool.space, a release or an issue on GitHub, the CoinGecko site, and on Android dontkillmyapp.com open in your browser. That site then sees your visit as it would any other.",
+  },
+];
+
+const never: string[] = [
+  "Ask for an account, a sign-up or an e-mail address.",
+  "Collect analytics, show ads, track you or send crash reports.",
+  "Contact a Gerfaut server. There is none.",
+  "Hold a private key or a seed, so it cannot sign or move your bitcoin.",
+  "Keep a picture from the camera. QR codes are read on the device.",
+];
+
+const policies = [
+  { href: "https://mempool.space/privacy-policy", label: "mempool.space" },
+  { href: "https://blockstream.com/privacy/", label: "Blockstream" },
+  { href: "https://www.coingecko.com/en/privacy", label: "CoinGecko" },
+  {
+    href: "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",
+    label: "GitHub",
+  },
+];
+// The words between the links of a list: commas, " and ", a full stop.
+const separator = (i: number, count: number) =>
+  i < count - 2 ? ", " : i === count - 2 ? " and " : ".";
+---
+
+<Base
+  title="Privacy policy · Gerfaut"
+  description="What the Gerfaut apps and this site send, and to whom. Gerfaut collects nothing and has no account."
+>
+  <section class="pt-16 pb-20 md:pt-24 md:pb-28">
+    <div class="site-container">
+      <header class="mx-auto max-w-2xl text-center">
+        <h1
+          class="font-display text-[2.25rem] leading-[1.05] font-semibold tracking-[-0.03em] sm:text-[2.75rem] lg:text-hero"
+        >
+          Privacy policy
+        </h1>
+        <p class="mt-5 text-lg text-muted">
+          Gerfaut collects nothing about you. What leaves your device goes to
+          the servers you choose, and this page names each one.
+        </p>
+        <p class="mt-3 text-sm text-muted">Updated {updated}</p>
+      </header>
+
+      <div class="mx-auto mt-12 max-w-2xl">
+        <Card class="p-4 sm:p-6">
+          <h2 class="font-display text-h2">What Gerfaut never does</h2>
+          <ul class="fact-list mt-4">
+            {
+              never.map((line) => (
+                <li>
+                  <Icon name="check" size={16} />
+                  <span>{line}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </Card>
+
+        <h2 class="mt-14 font-display text-h1">What stays on your device</h2>
+        <p class="mt-3">
+          Your wallets (descriptors, public keys, addresses), their names,
+          their history and your settings sit in one encrypted file on the device. Its encryption
+          key is in the credential store of your system, which is the Keychain,
+          the Android Keystore or the keyring of your desktop. On Android, the
+          file is left out of system backups and device transfers.
+        </p>
+        <p class="mt-3">
+          A backup is encrypted with a password you choose, and goes only
+          where you send it.
+        </p>
+
+        <h2 class="mt-14 font-display text-h1">What leaves your device</h2>
+        <dl class="mt-3 divide-y divide-border border-y border-border">
+          {
+            leaves.map((item) => (
+              <div class="py-4">
+                <dt class="font-medium">{item.term}</dt>
+                <dd class="mt-1 text-muted">{item.text}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <h2 class="mt-14 font-display text-h1">Tor</h2>
+        <p class="mt-3">
+          Gerfaut uses Tor to reach .onion addresses, and only those. When one
+          of your servers is a .onion address, the price and the update check
+          go through Tor too, and Gerfaut sends neither while Tor is out of
+          reach. Any other server sees your IP address. If that matters to you, use
+          your own node or a VPN.
+        </p>
+
+        <h2 class="mt-14 font-display text-h1">The servers you reach</h2>
+        <p class="mt-3">
+          Gerfaut has no say in what these operators log or how long they keep
+          it. Their own policies:
+          {
+            policies.map((policy, i) => (
+              <><a href={policy.href} class="link">{policy.label}</a>{separator(i, policies.length)}</>
+            ))
+          }
+          An app store you install Gerfaut from applies its own policy as
+          well.
+        </p>
+
+        <h2 class="mt-14 font-display text-h1">This website</h2>
+        <p class="mt-3">
+          gerfaut-wallet.com sets no cookie and runs no analytics.
+          <a href="https://www.cloudflare.com/privacypolicy/" class="link">Cloudflare</a>
+          hosts it and sees your IP address, as any host does. The download
+          page asks the GitHub API for the latest release from your browser.
+        </p>
+        <p class="mt-3">
+          The documentation under /docs is made with Mintlify and relayed
+          through this site, without your IP address. Its search box is the
+          exception. What you type there goes from your browser to
+          <a href="https://www.mintlify.com/legal/privacy" class="link">Mintlify</a>,
+          and the search loads
+          <a href="https://www.hcaptcha.com/privacy" class="link">hCaptcha</a>,
+          which sets a cookie of its own and reads details of your browser to
+          tell people from bots. Both see your IP address.
+        </p>
+
+        <h2 class="mt-14 font-display text-h1">Questions and changes</h2>
+        <p class="mt-3">
+          Write to <a href="mailto:info@pandul.fr" class="link">info@pandul.fr</a>.
+          This page changes when the apps change what they send, and every
+          version of it is in the
+          <a
+            href="https://github.com/gerfaut-dev/gerfaut-web/commits/main/src/pages/privacy.astro"
+            class="link">history of the site</a
+          >.
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,46 @@
+# gerfaut-web
+
+Website of [Gerfaut](https://github.com/gerfaut-dev), a Bitcoin watch-only wallet.
+
+![Status: public beta](https://img.shields.io/badge/status-public%20beta-yellow) ![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-blue)
+
+## Status: public beta
+
+Gerfaut is in public beta, and a banner at the top of every page says so. Report a problem with the site in the [issues](https://github.com/gerfaut-dev/gerfaut-web/issues) here, and a problem with an app in that app's repository ([mobile](https://github.com/gerfaut-dev/gerfaut-mobile/issues), [desktop](https://github.com/gerfaut-dev/gerfaut-desktop/issues)).
+
+## Scope
+
+- Product website and landing pages
+- Release downloads and how to verify them
+
+The user documentation lives in [`gerfaut-docs`](https://github.com/gerfaut-dev/gerfaut-docs), which Mintlify serves at [gerfaut-wallet.com/docs](https://gerfaut-wallet.com/docs).
+
+## Development
+
+The site is built with [Astro](https://astro.build) and Tailwind CSS, and compiles to static files.
+
+```sh
+npm install
+npm run dev      # local dev server
+npm run check    # type-check the pages and their scripts
+npm run build    # static build into dist/
+npm run preview  # serve the built site locally
+```
+
+## Project
+
+| Repository | Role |
+|---|---|
+| [`gerfaut-core`](https://github.com/gerfaut-dev/gerfaut-core) | Core Rust library |
+| [`gerfaut-mobile`](https://github.com/gerfaut-dev/gerfaut-mobile) | Mobile app (Flutter), for Android, with iPhone coming soon through TestFlight |
+| [`gerfaut-desktop`](https://github.com/gerfaut-dev/gerfaut-desktop) | Desktop app (Tauri v2, for Linux, macOS, and Windows) |
+| [`gerfaut-docs`](https://github.com/gerfaut-dev/gerfaut-docs) | User documentation (Mintlify), served at gerfaut-wallet.com/docs |
+| `gerfaut-web` | Website and downloads, this repository |
+
+## License
+
+Site code: [AGPL-3.0-only](LICENSE). Written content and brand assets are not covered by the code license. See [TRADEMARK.md](TRADEMARK.md).
+
+## Security
+
+Report vulnerabilities privately. See [SECURITY.md](SECURITY.md).

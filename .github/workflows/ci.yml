@@ -1,0 +1,52 @@
+# The site has to type-check and build before a change reaches main.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# A pull request pushed again stops its previous run, which nobody will
+# merge. Every other run has a group of its own: GitHub would otherwise
+# drop a pending run on main when a newer one arrives.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+
+  pins:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # Every `uses:` has to name a commit. A tag can be moved by whoever
+      # owns the action, and the job would then run code nobody reviewed.
+      - name: actions are pinned to a commit
+        run: |
+          loose=$(grep -rhoE 'uses: [^@ ]+@[^ ]+' .github/workflows/ | grep -vE '@[0-9a-f]{40}$' || true)
+          if [ -n "$loose" ]; then
+            echo "these are not pinned to a commit:" >&2
+            echo "$loose" >&2
+            exit 1
+          fi
+          echo "every action is pinned to a commit"

@@ -1,0 +1,586 @@
+---
+import CodeBlock from "../components/CodeBlock.astro";
+import Icon from "../components/Icon.astro";
+import Base from "../layouts/Base.astro";
+import Alert from "../components/ui/Alert.astro";
+import Badge from "../components/ui/Badge.astro";
+import Button from "../components/ui/Button.astro";
+import Card from "../components/ui/Card.astro";
+import CardHeader from "../components/ui/CardHeader.astro";
+
+// Listed in this order whenever the list is written out by hand: the two
+// phones side by side, then Linux, macOS, Windows. The visitor's own
+// system is only marked. A system marked `coming` has no file yet: its
+// card says so where the files would be.
+const platforms = [
+  {
+    slot: "android",
+    name: "Android",
+    icon: "smartphone",
+    formats: "one .apk per processor",
+    repo: "gerfaut-mobile",
+  },
+  {
+    slot: "iphone",
+    name: "iPhone",
+    icon: "smartphone",
+    formats: "iOS 15 or newer",
+    coming: true,
+  },
+  {
+    slot: "linux",
+    name: "Linux",
+    icon: "monitor",
+    formats: ".AppImage, .deb and .rpm for x86_64",
+    repo: "gerfaut-desktop",
+  },
+  {
+    slot: "macos",
+    name: "macOS",
+    icon: "monitor",
+    formats: ".app in a .zip archive",
+    repo: "gerfaut-desktop",
+    firstLaunch:
+      "Apple has not notarized the app, so macOS refuses it the first time. Open System Settings, then Privacy & Security, and click “Open Anyway”. Since macOS Sequoia, right-click and Open no longer gets past it.",
+  },
+  {
+    slot: "windows",
+    name: "Windows",
+    icon: "monitor",
+    formats: ".exe installer",
+    repo: "gerfaut-desktop",
+    firstLaunch:
+      "The installer has no code-signing certificate, so SmartScreen may stop it the first time. Click “More info”, then “Run anyway”.",
+  },
+] as const;
+
+const minisignKey = "RWTz3c4gUmglCX5Uvjthigz1ts3TS3ZSdhRNpFgOJRW/Wr4XjGlqTR3O";
+---
+
+<Base
+  title="Download Gerfaut · Bitcoin watch-only wallet"
+  description="Download Gerfaut for Android, iPhone, Linux, macOS and Windows. Free and open source, with checksums signed by the author's minisign key."
+>
+  <section class="pt-16 pb-12 md:pt-24">
+    <div class="site-container">
+      <div class="mx-auto max-w-2xl text-center">
+        <h1
+          class="font-display text-[2.25rem] leading-[1.05] font-semibold tracking-[-0.03em] sm:text-[2.75rem] lg:text-hero"
+        >
+          Download Gerfaut
+        </h1>
+        <p class="mt-5 text-lg text-muted">
+          Free and open source. Every release ships with checksums signed by
+          the author's minisign key.
+        </p>
+      </div>
+
+      {/* What the beta means for someone about to download, said once
+          above the files. Gone with the first stable release. */}
+      <Alert title="Public beta." class="mx-auto mt-10 max-w-3xl" data-beta-note>
+        Gerfaut never holds your private keys, so it cannot move your bitcoin.
+        It is new and has had little testing: check addresses and amounts on
+        your signing device before you rely on them. If something looks wrong,
+        open an issue on GitHub for the
+        <a
+          href="https://github.com/gerfaut-dev/gerfaut-mobile/issues"
+          class="beta-link">mobile app</a
+        >
+        or the
+        <a
+          href="https://github.com/gerfaut-dev/gerfaut-desktop/issues"
+          class="beta-link">desktop app</a
+        >.
+      </Alert>
+
+      {/* One column, as wide as the note above, until two cards have
+          the room to show a file name and its note on one line each. */}
+      <div class="mx-auto mt-8 grid max-w-3xl gap-4 xl:max-w-none xl:grid-cols-2 xl:gap-5">
+        {
+          platforms.map((platform) => (
+            <Card
+              id={platform.slot}
+              class="flex min-w-0 scroll-mt-24 flex-col p-4 sm:p-6"
+              data-platform={platform.slot}
+            >
+              <CardHeader icon={platform.icon} title={platform.name} description={platform.formats}>
+                <Fragment slot="action">
+                  <Badge class="hidden" data-platform-current>Your system</Badge>
+                  {!("coming" in platform) && (
+                    <span
+                      class="font-data hidden rounded-sm bg-sunken px-2 py-1 text-data text-muted"
+                      data-release-version={platform.slot}
+                    />
+                  )}
+                </Fragment>
+              </CardHeader>
+              {"coming" in platform ? (
+                <div class="mt-5 border-t border-border pt-4">
+                  <p class="text-sm font-medium">Coming soon, through TestFlight.</p>
+                  <p class="mt-1 text-sm text-muted">
+                    How it differs from Android is in the
+                    <a
+                      href="https://gerfaut-wallet.com/docs/getting-started/iphone-app"
+                      class="link">docs</a
+                    >.
+                  </p>
+                </div>
+              ) : (
+                <div
+                  class="mt-5 border-t border-border pt-4"
+                  data-release={platform.slot}
+                  aria-live="polite"
+                >
+                  <div data-state="loading" hidden>
+                    <p class="text-sm text-muted">
+                      Checking the latest release&hellip;
+                    </p>
+                  </div>
+                  <div data-state="empty" hidden>
+                    <p class="text-sm font-medium">No release yet.</p>
+                    <p class="mt-1 text-sm text-muted">
+                      The files will appear here once one is published. Until
+                      then, follow the project on
+                      <a href="https://github.com/gerfaut-dev" class="link">
+                        GitHub</a
+                      >.
+                    </p>
+                  </div>
+                  <div data-state="missing" hidden>
+                    <p class="text-sm font-medium">
+                      <span data-missing-version>This release</span> has no
+                      {platform.name} build.
+                    </p>
+                    <p class="mt-1 text-sm text-muted">
+                      Its notes and the earlier builds are on the
+                      <a
+                        href={`https://github.com/gerfaut-dev/${platform.repo}/releases`}
+                        class="link">releases page</a
+                      >.
+                    </p>
+                  </div>
+                  {/* Shown before the script runs and without it, as well as
+                      when GitHub gives no usable answer: it says where the
+                      files are, not that something failed. */}
+                  <div data-state="elsewhere">
+                    <p class="text-sm font-medium">The files are on GitHub.</p>
+                    <p class="mt-1 text-sm text-muted">
+                      Get them from the
+                      <a
+                        href={`https://github.com/gerfaut-dev/${platform.repo}/releases/latest`}
+                        class="link">release page</a
+                      >.
+                    </p>
+                  </div>
+                  <ul data-state="list" hidden class="space-y-2" />
+                </div>
+              )}
+              {
+                "firstLaunch" in platform && (
+                  <p class="mt-4 text-sm text-muted">
+                    <span class="font-medium text-text">First launch.</span>{" "}
+                    {platform.firstLaunch}
+                  </p>
+                )
+              }
+            </Card>
+          ))
+        }
+      </div>
+
+      <p class="mx-auto mt-8 max-w-xl text-center text-sm text-muted">
+        All builds and release notes live on
+        <a href="https://github.com/gerfaut-dev" class="link"
+          >github.com/gerfaut-dev</a
+        >. The apps check there for a new release at most once a day, through
+        Tor when your backend is an .onion address, and tell you when one is
+        out. Turn the check off in the About settings.
+      </p>
+    </div>
+  </section>
+
+  <section
+    id="verify"
+    class="section scroll-mt-20"
+    aria-labelledby="verify-heading"
+  >
+    <div class="site-container">
+      <Card class="mx-auto max-w-3xl p-4 sm:p-6 md:p-8">
+        <CardHeader
+          icon="shield-check"
+          title="Verify your download"
+          size="lg"
+          titleId="verify-heading"
+        />
+        <p class="mt-4 max-w-[66ch] text-sm text-muted">
+          Two commands prove that the checksum list comes from the author
+          and that your file matches it. Shown here for Linux. Download the
+          <span class="font-data">SHA256SUMS</span> file and its signature
+          from the
+          <a
+            href="https://github.com/gerfaut-dev/gerfaut-mobile/releases/latest"
+            class="link">mobile</a
+          >
+          or
+          <a
+            href="https://github.com/gerfaut-dev/gerfaut-desktop/releases/latest"
+            class="link">desktop</a
+          > release page, and save them in the folder of the file you are
+          checking.
+        </p>
+        <h3 class="mt-6 text-sm font-medium">
+          1. Check the signature of the checksum file
+        </h3>
+        <CodeBlock
+          text={`minisign -Vm SHA256SUMS -P ${minisignKey}`}
+          label="the minisign command"
+        />
+        <h3 class="mt-5 text-sm font-medium">2. Check the file you downloaded</h3>
+        <CodeBlock
+          text="sha256sum --check SHA256SUMS --ignore-missing"
+          label="the sha256sum command"
+        />
+        <h3 class="mt-6 text-sm font-medium">Author's minisign public key</h3>
+        <CodeBlock text={minisignKey} label="the minisign public key" />
+        <p id="copy-said" class="sr-only" role="status"></p>
+        <div class="mt-6 border-t border-border pt-5">
+          <Button
+            href="https://gerfaut-wallet.com/docs/getting-started/verify-your-download"
+            external
+          >
+            Read the guide for every system
+          </Button>
+        </div>
+      </Card>
+    </div>
+  </section>
+  <template id="disclosure-icon"><Icon name="chevron-right" size={16} /></template>
+  <template id="download-icon"><Icon name="download" size={16} /></template>
+</Base>
+
+<script>
+  import { detectPlatform } from "../lib/platform";
+
+  type Asset = { name: string; browser_download_url: string; size: number };
+  type Release = { tag_name: string; assets: Asset[] };
+
+  // A slot lists every asset its pattern matches. `variants` puts them in
+  // order and says what each one is for, since a name like
+  // Gerfaut-0.1.0-1.x86_64.rpm or armeabi-v7a answers nobody's question.
+  // With `fold`, the first variant is the one almost everyone wants and
+  // the rest fold away: Android ships one build per processor.
+  //
+  // The files of a release, as the release workflow of gerfaut-desktop
+  // names them: Gerfaut_<version>_amd64.AppImage,
+  // Gerfaut_<version>_amd64.deb, Gerfaut-<version>-1.x86_64.rpm,
+  // Gerfaut_<version>_x64-setup.exe and Gerfaut_<version>_universal.zip,
+  // which holds Gerfaut.app. Android: one .apk per processor.
+  type Variant = { pattern: RegExp; note: string };
+  type Matcher = {
+    repo: string;
+    pattern: RegExp;
+    variants?: Variant[];
+    fold?: boolean;
+  };
+
+  const matchers: Record<string, Matcher> = {
+    linux: {
+      repo: "gerfaut-desktop",
+      pattern: /\.(appimage|deb|rpm)$/i,
+      variants: [
+        { pattern: /\.appimage$/i, note: "Any distribution with glibc 2.35 or newer: make it executable, then run it" },
+        { pattern: /\.deb$/i, note: "Debian 12, Ubuntu 22.04 and newer, and their derivatives" },
+        { pattern: /\.rpm$/i, note: "Fedora" },
+      ],
+    },
+    windows: {
+      repo: "gerfaut-desktop",
+      pattern: /\.exe$/i,
+      variants: [{ pattern: /\.exe$/i, note: "Installer for 64-bit Windows" }],
+    },
+    macos: {
+      repo: "gerfaut-desktop",
+      pattern: /\.zip$/i,
+      variants: [
+        {
+          pattern: /\.zip$/i,
+          note: "Apple Silicon and Intel: unzip it, then move Gerfaut to Applications",
+        },
+      ],
+    },
+    android: {
+      repo: "gerfaut-mobile",
+      pattern: /\.apk$/i,
+      fold: true,
+      variants: [
+        { pattern: /arm64-v8a/i, note: "Almost every phone sold since 2017" },
+        { pattern: /armeabi-v7a/i, note: "Older 32-bit phones" },
+        { pattern: /x86_64/i, note: "Emulators and x86 tablets" },
+      ],
+    },
+  };
+
+  // The chevron of a disclosure and the arrow of a file, drawn once in
+  // the page: the script only copies them.
+  const disclosureIcon = document.querySelector<HTMLTemplateElement>("#disclosure-icon");
+  const downloadIcon = document.querySelector<HTMLTemplateElement>("#download-icon");
+
+  function setState(slot: Element, state: string) {
+    for (const panel of slot.querySelectorAll<HTMLElement>("[data-state]")) {
+      panel.hidden = panel.dataset.state !== state;
+    }
+  }
+
+  function formatSize(bytes: number): string {
+    const mb = bytes / (1024 * 1024);
+    return mb >= 100 ? `${Math.round(mb)} MB` : `${mb.toFixed(1)} MB`;
+  }
+
+  // What GitHub said about the latest release: the release itself,
+  // "none" when there is no release yet (a 404), or "error" when the
+  // answer never came or made no sense: offline, rate limited, down.
+  type Latest = Release | "none" | "error";
+
+  // GitHub answers in well under a second. A request still open after
+  // ten is not going to answer, and the card points at the release page
+  // instead of reading "Checking" for as long as the browser waits.
+  const PATIENCE = 10_000;
+
+  async function latest(repo: string): Promise<Latest> {
+    try {
+      const res = await fetch(
+        `https://api.github.com/repos/gerfaut-dev/${repo}/releases/latest`,
+        {
+          headers: { Accept: "application/vnd.github+json" },
+          // Safari before 16 has no AbortSignal.timeout: there the card
+          // waits as long as the browser does, rather than never listing.
+          signal:
+            typeof AbortSignal.timeout === "function"
+              ? AbortSignal.timeout(PATIENCE)
+              : undefined,
+        },
+      );
+      if (res.status === 404) return "none";
+      if (!res.ok) return "error";
+      const release = (await res.json()) as Release;
+      return Array.isArray(release.assets) ? release : "error";
+    } catch {
+      return "error";
+    }
+  }
+
+  // One downloadable file: its name, what it is for, and its weight.
+  function row(asset: Asset, note?: string): HTMLLIElement {
+    const item = document.createElement("li");
+    const link = document.createElement("a");
+    link.href = asset.browser_download_url;
+    link.className = "file-row";
+    const text = document.createElement("span");
+    // On a phone the name takes the whole line, so that it shows on one,
+    // and the weight and the arrow close the row on the right.
+    text.className = "min-w-0 basis-full sm:flex-1 sm:basis-0";
+    const label = document.createElement("span");
+    // Wrapped, not cut: the end of a name is what tells two files apart.
+    // A name too long for its row breaks after a dash or an underscore,
+    // and inside a word only when even that leaves it too long.
+    label.className = "font-data block text-data wrap-anywhere";
+    const parts = asset.name.match(/[^-_]*[-_]?/g) ?? [asset.name];
+    for (const [index, part] of parts.filter(Boolean).entries()) {
+      if (index > 0) label.append(document.createElement("wbr"));
+      label.append(part);
+    }
+    text.append(label);
+    if (note) {
+      const hint = document.createElement("span");
+      hint.className = "mt-0.5 block text-sm text-pretty text-muted";
+      hint.textContent = note;
+      text.append(hint);
+    }
+    const size = document.createElement("span");
+    size.className = "ml-auto shrink-0 text-sm text-muted tabular-nums";
+    size.textContent = formatSize(asset.size);
+    link.append(text, size);
+    const arrow = downloadIcon?.content.firstElementChild?.cloneNode(true);
+    if (arrow) link.append(arrow);
+    item.append(link);
+    return item;
+  }
+
+  // Orders the assets the way the variants are declared, unmatched last,
+  // and carries each one's note along.
+  function ordered(
+    assets: Asset[],
+    variants?: Variant[],
+  ): { asset: Asset; note?: string }[] {
+    if (!variants) return assets.map((asset) => ({ asset }));
+    const rank = (asset: Asset) => {
+      const index = variants.findIndex((v) => v.pattern.test(asset.name));
+      return index === -1 ? variants.length : index;
+    };
+    return [...assets]
+      .sort((a, b) => rank(a) - rank(b))
+      .map((asset) => ({ asset, note: variants[rank(asset)]?.note }));
+  }
+
+  // A link only ever leads to this repository's release files, whatever
+  // the answer says. The address is parsed first, so "..", "%2e%2e" or a
+  // backslash in it cannot step out of the release folder.
+  function releaseFile(repo: string, address: unknown): string | null {
+    if (typeof address !== "string") return null;
+    let url: URL;
+    try {
+      url = new URL(address);
+    } catch {
+      return null;
+    }
+    const folder = `/gerfaut-dev/${repo}/releases/download/`;
+    if (url.origin !== "https://github.com" || !url.pathname.startsWith(folder)) {
+      return null;
+    }
+    return url.href;
+  }
+
+  // Every state but the list ends on a link to GitHub: no release yet,
+  // a release without a file for this system, or no answer at all.
+  function render(name: string, release: Latest) {
+    const slot = document.querySelector(`[data-release="${name}"]`);
+    if (!slot) return;
+    if (release === "none" || release === "error") {
+      setState(slot, release === "none" ? "empty" : "elsewhere");
+      return;
+    }
+    const named = release.assets.filter((asset) =>
+      matchers[name]?.pattern.test(asset.name),
+    );
+    const assets = named.flatMap((asset) => {
+      const href = releaseFile(matchers[name]?.repo ?? "", asset.browser_download_url);
+      return href ? [{ ...asset, browser_download_url: href }] : [];
+    });
+    // Files GitHub lists but whose address leaves the release folder: the
+    // card sends the visitor to the releases page rather than to them.
+    if (named.length > 0 && assets.length === 0) {
+      setState(slot, "elsewhere");
+      return;
+    }
+    if (assets.length === 0) {
+      const named = slot.querySelector<HTMLElement>("[data-missing-version]");
+      if (named) named.textContent = release.tag_name;
+      setState(slot, "missing");
+      return;
+    }
+    const version = document.querySelector<HTMLElement>(
+      `[data-release-version="${name}"]`,
+    );
+    if (version) {
+      version.textContent = release.tag_name;
+      version.hidden = false;
+      version.classList.remove("hidden");
+    }
+    const list = slot.querySelector<HTMLElement>('[data-state="list"]');
+    if (!list) return;
+    list.textContent = "";
+    const variants = matchers[name]?.variants;
+    const fold = matchers[name]?.fold ?? false;
+    const entries = ordered(assets, variants);
+    // Files for different systems all stay in view. Files for different
+    // processors fold: only the first is offered outright, since three
+    // processor names side by side turn a download into a quiz.
+    const shown = fold ? entries.slice(0, 1) : entries;
+    const folded = fold ? entries.slice(1) : [];
+    for (const { asset, note } of shown) list.append(row(asset, note));
+    if (folded.length > 0) {
+      const details = document.createElement("details");
+      details.className = "mt-2";
+      const summary = document.createElement("summary");
+      summary.className = "disclosure";
+      const chevron = disclosureIcon?.content.firstElementChild?.cloneNode(true);
+      if (chevron) summary.append(chevron);
+      summary.append(`Other architectures (${folded.length})`);
+      const inner = document.createElement("ul");
+      inner.className = "mt-2 space-y-2";
+      for (const { asset, note } of folded) inner.append(row(asset, note));
+      details.append(summary, inner);
+      const item = document.createElement("li");
+      item.append(details);
+      list.append(item);
+    }
+    setState(slot, "list");
+  }
+
+  async function load() {
+    for (const slot of document.querySelectorAll("[data-release]")) {
+      setState(slot, "loading");
+    }
+    const [desktop, mobile] = await Promise.all([
+      latest("gerfaut-desktop"),
+      latest("gerfaut-mobile"),
+    ]);
+    render("android", mobile);
+    render("linux", desktop);
+    render("macos", desktop);
+    render("windows", desktop);
+  }
+
+  // The card of the visitor's system stands out: a Glacier border and a
+  // pill. The address names a platform when the home page sent the
+  // visitor here; otherwise the system is read from the browser.
+  function highlight(slot: string): HTMLElement | null {
+    const card = document.querySelector<HTMLElement>(`[data-platform="${slot}"]`);
+    if (!card) return null;
+    card.classList.add("card-current");
+    card.querySelector<HTMLElement>("[data-platform-current]")?.classList.remove("hidden");
+    return card;
+  }
+  const slots = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-platform]"),
+    (card) => card.dataset.platform,
+  );
+  const named = window.location.hash.slice(1);
+  if (slots.includes(named)) highlight(named);
+  else {
+    detectPlatform().then((detected) => {
+      if (!detected) return;
+      const card = highlight(detected.slot);
+      // A system whose app is not out yet: its card moves to the top,
+      // ahead of files the visitor has no use for. Only on a plain
+      // visit, so that a page opened on #verify never jumps.
+      if (card && detected.release === "coming" && !named) card.parentElement?.prepend(card);
+    });
+  }
+
+  load();
+
+  // The copy buttons of the verify section: the clipboard when the page
+  // is allowed to write it, a short check on the button, and the same
+  // news for a screen reader. Without clipboard access the text is
+  // selected instead, so that a manual copy is one keystroke.
+  const copySaid = document.getElementById("copy-said");
+  function say(text: string) {
+    if (!copySaid) return;
+    // Emptied first, so that a second copy of the same block is read out.
+    copySaid.textContent = "";
+    setTimeout(() => (copySaid.textContent = text), 50);
+  }
+  for (const button of document.querySelectorAll<HTMLButtonElement>("[data-copy]")) {
+    button.addEventListener("click", async () => {
+      const what = button.getAttribute("aria-label")?.replace(/^Copy: /, "") ?? "";
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy ?? "");
+      } catch {
+        const code = button.parentElement?.querySelector("code");
+        if (code) {
+          const range = document.createRange();
+          range.selectNodeContents(code);
+          const selection = window.getSelection();
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+        }
+        say(`No clipboard access: ${what} is selected instead, ready to copy.`);
+        return;
+      }
+      button.setAttribute("data-done", "");
+      say(`Copied: ${what}.`);
+      setTimeout(() => button.removeAttribute("data-done"), 1500);
+    });
+  }
+</script>
